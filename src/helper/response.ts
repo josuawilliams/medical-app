@@ -17,6 +17,15 @@ const error = async (message: string, res: any, code: number) => {
 
   return res.status(code).json(logData)
 }
+const successResultService = async (
+  message: string,
+  res: any,
+  code: number
+) => {
+  const { path, method, logData } = getResData(res, code, message)
+
+  return res.status(code).json(logData)
+}
 
 const errorService = (status: boolean, message: string, statusCode: number) => {
   return {
@@ -25,5 +34,16 @@ const errorService = (status: boolean, message: string, statusCode: number) => {
     statusCode
   }
 }
+const successService = (
+  status: boolean,
+  message: string | any,
+  statusCode: number
+) => {
+  return {
+    status,
+    message,
+    statusCode
+  }
+}
 
-export = { errorService, error }
+export = { errorService, error, successService, successResultService }

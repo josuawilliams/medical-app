@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 const AdminSchema = new mongoose.Schema({
   email: { type: String, required: true },
+  nik: { type: String, required: true },
   nama_admin: { type: String, required: true, trim: true },
   divisi: {
     type: String,
@@ -17,7 +18,6 @@ const AdminSchema = new mongoose.Schema({
   timeOfEntry: {
     type: Date
   },
-  salt: { type: String, select: false },
   login_attempt: {
     type: Number,
     default: 0
@@ -37,4 +37,4 @@ const AdminSchema = new mongoose.Schema({
   }
 })
 
-export const AdminModel = mongoose.model('Admin', AdminSchema)
+export const AdminModel = mongoose.model('admins', AdminSchema)
