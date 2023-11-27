@@ -1,4 +1,7 @@
-import mongoose from 'mongoose'
+import mongoose, { Document } from 'mongoose'
+import { adminType } from '../module/admin/adminIterface'
+
+export interface adminTypeModel extends adminType, Document {}
 
 const AdminSchema = new mongoose.Schema({
   email: { type: String, required: true },
@@ -11,7 +14,6 @@ const AdminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    select: false,
     minLength: 8,
     trim: true
   },
@@ -27,14 +29,15 @@ const AdminSchema = new mongoose.Schema({
     enum: ['Tidak Aktif', 'Aktif'],
     default: 'Aktif'
   },
-  refresh_token: {
+  admin_token: {
     type: String
   },
   jenis_kelamin: {
     type: Number,
+    require: true,
     min: 1,
     max: 2 //1 = Laki-laki, 2 = perempuan
   }
 })
 
-export const AdminModel = mongoose.model('admins', AdminSchema)
+export const AdminModel = mongoose.model<adminTypeModel>('admins', AdminSchema)

@@ -1,4 +1,6 @@
+import { ModifiedInterface } from '../module/admin/adminIterface'
 import response from './response'
+import Jwt from 'jsonwebtoken'
 
 const passwordValidation = (password: string) => {
   if (password.length < 8)
@@ -37,4 +39,12 @@ const passwordValidation = (password: string) => {
   return response.successService(true, 'Validasi password berhasil', 200)
 }
 
-export default passwordValidation
+const adminToken = (data: ModifiedInterface) => {
+  const token = Jwt.sign({ data }, process.env.SECRET_KEY as string, {
+    algorithm: 'HS256',
+    expiresIn: '10s'
+  })
+  return token
+}
+
+export { passwordValidation, adminToken }

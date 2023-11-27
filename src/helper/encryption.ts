@@ -6,6 +6,11 @@ class encryption {
 
     return hash
   }
+
+  static comparePassword(password: string, hash: string) {
+    const resultPassword = bcrypt.compareSync(password, hash)
+    return resultPassword
+  }
 }
 
 export default encryption

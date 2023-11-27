@@ -1,7 +1,8 @@
-import { adminValidatorType } from './adminIterface'
+import { adminValidatorLogin, adminValidatorType } from './adminIterface'
 import response from '../../helper/response'
-import passwordValidation from '../../helper/globalHelper'
-
+import { passwordValidation } from '../../helper/globalHelper'
+import encryption from '../../helper/encryption'
+const { loginAttempt } = require('./adminServices')
 class adminValidator {
   static newAdminValidator(data: adminValidatorType) {
     try {
@@ -29,6 +30,59 @@ class adminValidator {
         return response.errorService(false, passwordValidator.message, 408)
 
       return response.successService(true, 'Validasi berhasil', 200)
+    } catch (error: any) {
+      return response.errorService(false, error.message, 500)
+    }
+  }
+
+  static async adminLoginValidator(
+    data: { email: string; password: string },
+    admin: adminValidatorLogin
+  ) {
+    try {
+      if (!data.email)
+        return response.errorService(false, 'Mohon masukkan email', 408)
+      if (!data.password)
+        return response.errorService(false, 'Mohon masukkan password', 408)
+
+      if (admin.login_attempt > 4) {
+        return response.errorService(
+          false,
+          'Akun Anda Terblokir, Mohon Hubungi Pihak Terkait',
+          401
+        )
+      }
+      if (admin.status_admin === 'Tidak Aktif')
+        return response.errorService(
+          false,
+          'Akun dinonaktifkan, mohon hubungi tim terkait',
+          401
+        )
+
+      if (!admin) {
+        const isLoginAttempt = await loginAttempt(admin)
+        return response.errorService(
+          isLoginAttempt.status,
+          isLoginAttempt.message,
+          408
+        )
+      }
+
+      const passwordValidation = encryption.comparePassword(
+        data.password,
+        admin.password
+      )
+
+      if (!passwordValidation) {
+        const isLoginAttempt = await loginAttempt(admin)
+        return response.errorService(
+          isLoginAttempt.status,
+          isLoginAttempt.message,
+          408
+        )
+      }
+
+      return response.successService(true, 'Validasi Berhasil', 200)
     } catch (error: any) {
       return response.errorService(false, error.message, 500)
     }
