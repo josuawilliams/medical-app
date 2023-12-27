@@ -7,27 +7,27 @@ class adminValidator {
   static newAdminValidator(data: adminValidatorType) {
     try {
       if (!data.nama_admin)
-        return response.errorService(false, 'Silakan Masukkan Nama Anda', 408)
+        return response.errorService(false, 'Silakan Masukkan Nama Anda', 400)
       if (!data.email)
-        return response.errorService(false, 'Silakan Isi Email Anda', 408)
+        return response.errorService(false, 'Silakan Isi Email Anda', 400)
       if (!data.divisi)
-        return response.errorService(false, 'Silakan Pilih Divisi', 408)
+        return response.errorService(false, 'Silakan Pilih Divisi', 400)
       if (!data.password)
-        return response.errorService(false, 'Silakan Masukkan Password', 408)
+        return response.errorService(false, 'Silakan Masukkan Password', 400)
       if (!data.jenis_kelamin)
         return response.errorService(
           false,
           'Silakan Masukkan Jenis Kelamin',
-          408
+          400
         )
       if (!data.nik)
-        return response.errorService(false, 'Silakan Masukkan Password', 408)
+        return response.errorService(false, 'Silakan Masukkan Password', 400)
       if (data.nik.length < 16)
-        return response.errorService(false, 'NIK minimum 16 karakter', 408)
+        return response.errorService(false, 'NIK minimum 16 karakter', 400)
 
       const passwordValidator = passwordValidation(data.password)
       if (!passwordValidator.status)
-        return response.errorService(false, passwordValidator.message, 408)
+        return response.errorService(false, passwordValidator.message, 400)
 
       return response.successService(true, 'Validasi berhasil', 200)
     } catch (error: any) {
@@ -41,9 +41,9 @@ class adminValidator {
   ) {
     try {
       if (!data.email)
-        return response.errorService(false, 'Mohon masukkan email', 408)
+        return response.errorService(false, 'Mohon masukkan email', 400)
       if (!data.password)
-        return response.errorService(false, 'Mohon masukkan password', 408)
+        return response.errorService(false, 'Mohon masukkan password', 400)
 
       if (admin.login_attempt > 4) {
         return response.errorService(
@@ -64,7 +64,7 @@ class adminValidator {
         return response.errorService(
           isLoginAttempt.status,
           isLoginAttempt.message,
-          408
+          400
         )
       }
 
@@ -78,7 +78,7 @@ class adminValidator {
         return response.errorService(
           isLoginAttempt.status,
           isLoginAttempt.message,
-          408
+          400
         )
       }
 

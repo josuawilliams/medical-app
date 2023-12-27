@@ -7,33 +7,35 @@ import { adminCreate, adminType, adminValidatorLogin } from './adminIterface'
 const checkingAdmin = async (email: string) => {
   try {
     const check = await AdminModel.findOne({ email: email }).lean()
-    if (check) return response.errorService(false, 'Email Sudah Terdaftar', 408)
+    if (check) return response.errorService(false, 'Email Sudah Terdaftar', 400)
 
     return response.successService(true, 'Email Tidak Terdaftar', 200)
   } catch (err: any) {
-    return response.errorService(false, err.message, 408)
+    return response.errorService(false, err.message, 500)
   }
 }
 
 const checkingAdminEmail = async (email: string) => {
   try {
-    const check = await AdminModel.findOne({ email: email }).lean()
-    if (check) return response.successService(true, check, 200)
+    const check = await AdminModel.findOne({ email: email })
+    if (check) {
+      return response.successService(true, check, 200)
+    }
 
-    return response.errorService(false, 'Pengguna Tidak Terdaftar', 408)
+    return response.errorService(false, 'Pengguna Tidak Terdaftar', 400)
   } catch (err: any) {
-    return response.errorService(false, err.message, 408)
+    return response.errorService(false, err.message, 500)
   }
 }
 
 const checkingNIKAdmin = async (nik: string) => {
   try {
     const check = await AdminModel.findOne({ nik: nik }).lean()
-    if (check) return response.errorService(false, 'NIK Sudah Terdaftar', 408)
+    if (check) return response.errorService(false, 'NIK Sudah Terdaftar', 403)
 
     return response.successService(true, 'NIK Tidak Terdaftar', 200)
   } catch (err: any) {
-    return response.errorService(false, err.message, 408)
+    return response.errorService(false, err.message, 500)
   }
 }
 
@@ -48,11 +50,11 @@ const loginAttempt = async (admin: adminValidatorLogin) => {
         `Email/password salah, anda memiliki kesempatan ${
           5 - checkId.login_attempt
         } lagi untuk mencoba kembali`,
-        408
+        400
       )
     }
   } catch (err: any) {
-    return response.errorService(false, err.message, 408)
+    return response.errorService(false, err.message, 500)
   }
 }
 
@@ -70,7 +72,7 @@ const createAdmin = async (data: adminCreate) => {
     await newAdmin.save()
     return response.successService(true, newAdmin, 200)
   } catch (error: any) {
-    return response.errorService(false, error.message, 408)
+    return response.errorService(false, error.message, 500)
   }
 }
 
@@ -85,7 +87,7 @@ const saveAuthAndResetLoginAttempt = async (
       checkId.timeOfEntry = new Date()
       await checkId.save()
     } else {
-      return response.errorService(false, 'Id Pengguna Tidak Ditemukan', 408)
+      return response.errorService(false, 'Id Pengguna Tidak Ditemukan', 400)
     }
 
     const auth = new AuthModel({
@@ -94,9 +96,20 @@ const saveAuthAndResetLoginAttempt = async (
     })
     await auth.save()
 
-    return response.successService(true, "Berhasil Login", 200)
+    return response.successService(true, 'Berhasil Login', 200)
   } catch (err: any) {
-    return response.errorService(false, err.message, 408)
+    return response.errorService(false, err.message, 500)
+  }
+}
+
+const checkAdmin = async (Id: string) => {
+  try {
+    const res = await AdminModel.findById(Id)
+    if (!res) return response.errorService(false, 'User Tidak Ditemukan', 400)
+
+    return response.successService(true, res, 200)
+  } catch (err: any) {
+    return response.errorService(false, err.message, 500)
   }
 }
 
@@ -106,5 +119,6 @@ module.exports = {
   checkingNIKAdmin,
   checkingAdminEmail,
   loginAttempt,
-  saveAuthAndResetLoginAttempt
+  saveAuthAndResetLoginAttempt,
+  checkAdmin
 }
